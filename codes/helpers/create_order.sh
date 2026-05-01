@@ -31,7 +31,7 @@ create_order_with_shipping() {
       --data-raw "{
         \"action\": \"new\",
         \"cart-id\": \"$CART_ID\",
-        \"items\": {\"1\": $QTY}
+        \"items\": {\"1017\": $QTY}
       }")
 
     export ORDER_ID

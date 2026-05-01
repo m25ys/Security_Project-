@@ -29,7 +29,6 @@ MISSING=()
 [ "$USER_POOL_ID"   = "us-east-1_XXXXXXXXX" ]        && MISSING+=("USER_POOL_ID")
 [ "$RECEIPTS_BUCKET" = "YOUR_RECEIPTS_BUCKET_NAME" ] && MISSING+=("RECEIPTS_BUCKET")
 [ "$WEBSITE_URL"    = "http://YOUR_BUCKET_NAME.s3-website-us-east-1.amazonaws.com" ] && MISSING+=("WEBSITE_URL")
-[ "$TOKEN_A"        = "PASTE_USER_A_JWT_TOKEN_HERE" ] && MISSING+=("TOKEN_A")
 [ "$TOKEN_B"        = "PASTE_USER_B_JWT_TOKEN_HERE" ] && MISSING+=("TOKEN_B")
 [ "$TOKEN_C"        = "PASTE_USER_C_JWT_TOKEN_HERE" ] && MISSING+=("TOKEN_C")
 
