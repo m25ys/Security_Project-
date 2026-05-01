@@ -1,0 +1,50 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3ReceiptsOnly",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::YOUR_RECEIPTS_BUCKET_NAME/*"
+      ]
+    },
+    {
+      "Sid": "DynamoDBDVSATablesOnly",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:Query"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-1:YOUR_ACCOUNT_ID:table/DVSA-ORDERS-DB",
+        "arn:aws:dynamodb:us-east-1:YOUR_ACCOUNT_ID:table/DVSA-USERS-DB"
+      ]
+    },
+    {
+      "Sid": "SESSendEmailOnly",
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "ses:FromAddress": "YOUR_ADMIN_EMAIL@example.com"
+        }
+      }
+    },
+    {
+      "Sid": "STSGetCallerIdentity",
+      "Effect": "Allow",
+      "Action": [
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
