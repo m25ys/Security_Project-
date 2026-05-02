@@ -1,8 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 5: FIX VERIFICATION
-# Confirm order status cannot be changed to paid without billing
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 source "$(dirname "$0")/../helpers/create_order.sh"
@@ -13,16 +9,12 @@ echo "=========================================="
 
 guard_token "TOKEN_B"
 
-# -------------------------------------------------------
-# TEST 1: Attempt to mark order paid via admin action (must fail)
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Attempting to bypass billing (should be BLOCKED)..."
 
 create_order_with_shipping "TOKEN_B" "verify5-cart" 1
 VERIFY_ORDER="$ORDER_ID"
 
-# Try all three methods from the exploit script
 echo "   Trying update-order action..."
 R1=$(curl -s -X POST "$API" \
   -H "content-type: application/json" \
@@ -38,9 +30,6 @@ R2=$(curl -s -X POST "${API_URL}/order/admin" \
   --data-raw "{\"action\":\"update\",\"order-id\":\"$VERIFY_ORDER\",\"status\":\"paid\"}" 2>/dev/null)
 echo "   Response: $R2"
 
-# -------------------------------------------------------
-# Check final order status — must NOT be 'paid'
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1 CHECK] Verifying order status after bypass attempts..."
 sleep 1
@@ -57,9 +46,6 @@ else
     echo "   ✅ FIXED: Order status is '$STATUS' — bypass was blocked."
 fi
 
-# -------------------------------------------------------
-# TEST 2: Legitimate billing flow should still work
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] Confirming legitimate billing flow still works..."
 
