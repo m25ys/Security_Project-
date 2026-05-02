@@ -1,9 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 8: FIX VERIFICATION
-# Confirm the race condition no longer changes order quantity
-# after billing has begun
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 source "$(dirname "$0")/../helpers/create_order.sh"
@@ -14,9 +9,6 @@ echo "=========================================="
 
 guard_token "TOKEN_B"
 
-# -------------------------------------------------------
-# TEST 1: Race condition should now be BLOCKED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Attempting race condition (should be BLOCKED after fix)..."
 
@@ -24,7 +16,6 @@ create_order_with_shipping "TOKEN_B" "verify8-race-$(date +%s)" 1
 VERIFY_ORDER="$ORDER_ID"
 echo "   Order ID: $VERIFY_ORDER"
 
-# Run the synchronized race using Python threading
 python3 - <<PYVERIFY
 import os, threading, urllib.request, json, time
 
@@ -70,9 +61,6 @@ if update_blocked:
     print("   UPDATE WAS BLOCKED by locking mechanism")
 PYVERIFY
 
-# -------------------------------------------------------
-# Check final state — quantity must still be 1
-# -------------------------------------------------------
 echo ""
 sleep 2
 FINAL=$(curl -s "$API" \
@@ -96,9 +84,6 @@ else
     echo "   ⚠️  Unexpected quantity '$FINAL_QTY' — check CloudWatch logs."
 fi
 
-# -------------------------------------------------------
-# TEST 2: Normal billing should still work
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] Normal sequential billing flow (should SUCCEED)..."
 
