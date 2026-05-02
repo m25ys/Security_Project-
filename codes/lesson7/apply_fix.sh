@@ -1,8 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 7: APPLY LEAST PRIVILEGE FIX
-# Restricts DVSA-SEND-RECEIPT-EMAIL execution role
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -12,7 +8,6 @@ echo "=========================================="
 
 FUNCTION_NAME="DVSA-SEND-RECEIPT-EMAIL"
 
-# Get role name
 ROLE_ARN=$(aws lambda get-function-configuration \
   --function-name "$FUNCTION_NAME" \
   --region "$AWS_REGION" \
@@ -22,9 +17,6 @@ ROLE_NAME=$(echo "$ROLE_ARN" | sed 's/.*role\///')
 
 echo "   Role: $ROLE_NAME"
 
-# -------------------------------------------------------
-# STEP 1: Detach AmazonSESFullAccess (too permissive)
-# -------------------------------------------------------
 echo ""
 echo "[STEP 1] Detaching AmazonSESFullAccess..."
 aws iam detach-role-policy \
@@ -34,13 +26,9 @@ aws iam detach-role-policy \
   echo "   ✅ AmazonSESFullAccess detached." || \
   echo "   ℹ️  Already detached or not found."
 
-# -------------------------------------------------------
-# STEP 2: Create and attach the least-privilege policy
-# -------------------------------------------------------
 echo ""
 echo "[STEP 2] Creating least-privilege inline policy..."
 
-# Replace placeholders with real values
 POLICY_JSON=$(cat <<EOF
 {
   "Version": "2012-10-17",
