@@ -1,8 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 1 & 9 FIX VERIFICATION
-# Run after applying the fix to confirm RCE is no longer possible
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
