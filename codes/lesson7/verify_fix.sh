@@ -1,9 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 7: FIX VERIFICATION
-# Re-runs IAM Policy Simulator to confirm over-privilege is gone
-# Confirms receipt email flow still works after policy change
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -13,7 +8,6 @@ echo "=========================================="
 
 FUNCTION_NAME="DVSA-SEND-RECEIPT-EMAIL"
 
-# Get role ARN and name
 ROLE_ARN=$(aws lambda get-function-configuration \
   --function-name "$FUNCTION_NAME" \
   --region "$AWS_REGION" \
@@ -22,9 +16,6 @@ ROLE_NAME=$(echo "$ROLE_ARN" | sed 's/.*role\///')
 
 echo "   Role: $ROLE_NAME"
 
-# -------------------------------------------------------
-# TEST 1: S3 on arbitrary bucket should now be DENIED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] S3 GetObject/PutObject on arbitrary bucket (should be DENIED)..."
 
@@ -43,9 +34,6 @@ else
     echo "   ❌ S3 access on arbitrary buckets is still ALLOWED ($S3_ALLOWED actions)."
 fi
 
-# -------------------------------------------------------
-# TEST 2: DynamoDB on arbitrary table should now be DENIED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] DynamoDB Scan/DeleteItem on arbitrary table (should be DENIED)..."
 
@@ -64,9 +52,6 @@ else
     echo "   ❌ DynamoDB access on arbitrary tables is still ALLOWED ($DDB_ALLOWED actions)."
 fi
 
-# -------------------------------------------------------
-# TEST 3: S3 on the SPECIFIC receipts bucket should still be ALLOWED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 3] S3 GetObject on DVSA receipts bucket (should be ALLOWED)..."
 
@@ -85,9 +70,6 @@ else
     echo "   ⚠️  Receipts bucket access is DENIED — fix may be too restrictive."
 fi
 
-# -------------------------------------------------------
-# TEST 4: DynamoDB on DVSA tables should still be ALLOWED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 4] DynamoDB GetItem on DVSA-ORDERS-DB (should be ALLOWED)..."
 
@@ -106,9 +88,6 @@ else
     echo "   ⚠️  DVSA DynamoDB access DENIED — fix may be too restrictive."
 fi
 
-# -------------------------------------------------------
-# TEST 5: Confirm AmazonSESFullAccess is detached
-# -------------------------------------------------------
 echo ""
 echo "[TEST 5] Checking AmazonSESFullAccess is removed..."
 
