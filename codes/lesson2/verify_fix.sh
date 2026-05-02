@@ -1,9 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 2: FIX VERIFICATION
-# After applying the JWT signature verification fix,
-# confirm the forged token is now rejected
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -11,7 +6,6 @@ echo "=========================================="
 echo " LESSON 2: Broken Authentication - Fix Verification"
 echo "=========================================="
 
-# Rebuild the forged token
 export VICTIM_USER=$(python3 - <<'PY'
 import os, json, base64
 token = os.environ.get("TOKEN_C", "")
@@ -44,9 +38,6 @@ else:
 PY
 )"
 
-# -------------------------------------------------------
-# TEST 1: Forged token should now be rejected
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Forged token request (should be REJECTED after fix)..."
 FORGED_RESPONSE=$(curl -s "$API" \
@@ -62,9 +53,7 @@ else
     echo "   ❌ Fix may not be applied yet - check the Lambda code."
 fi
 
-# -------------------------------------------------------
-# TEST 2: Legitimate token should still work
-# -------------------------------------------------------
+
 echo ""
 echo "[TEST 2] Legitimate token for User B (should still WORK)..."
 LEGIT_RESPONSE=$(curl -s "$API" \
