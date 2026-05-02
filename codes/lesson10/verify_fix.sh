@@ -1,9 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 10: FIX VERIFICATION
-# Confirms malformed requests no longer leak stack traces,
-# and that valid requests still work normally
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -24,7 +19,6 @@ run_test() {
       ${AUTH:+-H "authorization: $AUTH"} \
       --data-raw "$PAYLOAD")
 
-    # Check for information leakage patterns
     if echo "$RESP" | grep -qiE "stack|at Object\.|/var/task|TypeError|ReferenceError|SyntaxError|Cannot read prop|undefined is not|\.js:[0-9]"; then
         echo "   ❌ [$DESC] LEAKS internal details:"
         echo "$RESP" | head -3 | sed 's/^/      /'
@@ -35,9 +29,6 @@ run_test() {
     fi
 }
 
-# -------------------------------------------------------
-# TEST GROUP 1: All malformed inputs must return generic errors
-# -------------------------------------------------------
 echo ""
 echo "[TEST GROUP 1] Malformed inputs — no stack traces allowed..."
 
@@ -50,9 +41,6 @@ run_test "missing order-id"     '{"action":"billing"}'                   "$TOKEN
 run_test "deeply nested"        '{"action":{"nested":{"key":"val"}}}'    ""
 run_test "unicode injection"    '{"action":"get","order-id":"\u0000\u001f"}' "$TOKEN_B"
 
-# -------------------------------------------------------
-# TEST GROUP 2: Valid request must still work
-# -------------------------------------------------------
 echo ""
 echo "[TEST GROUP 2] Valid request — must still succeed..."
 
@@ -73,9 +61,6 @@ else
     echo "   ℹ️  TOKEN_B not set — skipping valid request test."
 fi
 
-# -------------------------------------------------------
-# TEST GROUP 3: Check CloudWatch still receives full details
-# -------------------------------------------------------
 echo ""
 echo "[TEST GROUP 3] CloudWatch should still log full error details..."
 
@@ -99,9 +84,6 @@ if [ -n "$LATEST_STREAM" ] && [ "$LATEST_STREAM" != "None" ]; then
     fi
 fi
 
-# -------------------------------------------------------
-# Summary
-# -------------------------------------------------------
 echo ""
 echo "=========================================="
 echo " Results Summary:"
