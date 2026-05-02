@@ -1,8 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 9: FIX VERIFICATION
-# Confirms node-serialize is removed and npm audit is clean
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -13,9 +9,6 @@ echo "=========================================="
 WORK_DIR="/tmp/dvsa_dep_verify"
 mkdir -p "$WORK_DIR"
 
-# -------------------------------------------------------
-# TEST 1: Download updated Lambda and check node-serialize is gone
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Downloading patched Lambda to verify dependency removal..."
 
@@ -35,7 +28,6 @@ else
     echo "   ✅ node-serialize is no longer in node_modules."
 fi
 
-# Check package.json for the dependency entry
 if [ -f "$WORK_DIR/extracted/package.json" ]; then
     HAS_DEP=$(python3 -c "
 import json
@@ -50,9 +42,6 @@ print('yes' if 'node-serialize' in pkg.get('dependencies', {}) else 'no')
     fi
 fi
 
-# -------------------------------------------------------
-# TEST 2: Verify source code no longer calls unserialize
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] Checking order-manager.js for unserialize calls..."
 MANAGER="$WORK_DIR/extracted/order-manager.js"
@@ -66,9 +55,6 @@ if [ -f "$MANAGER" ]; then
     fi
 fi
 
-# -------------------------------------------------------
-# TEST 3: Run npm audit on patched package
-# -------------------------------------------------------
 echo ""
 echo "[TEST 3] Running npm audit on patched Lambda..."
 cd "$WORK_DIR/extracted"
@@ -85,9 +71,6 @@ if command -v npm &>/dev/null; then
 fi
 cd - > /dev/null
 
-# -------------------------------------------------------
-# TEST 4: RCE payload should now fail safely
-# -------------------------------------------------------
 echo ""
 echo "[TEST 4] Sending original RCE payload (should be rejected)..."
 RESPONSE=$(curl -s -X POST "${API_URL}/order" \
@@ -103,7 +86,6 @@ echo "   Check CloudWatch /aws/lambda/DVSA-ORDER-MANAGER for recent logs."
 echo "   If 'STILL VULNERABLE' does NOT appear → ✅ Fix is effective."
 echo "   If it DOES appear → ❌ Lambda was not redeployed correctly."
 
-# Auto-check CloudWatch
 LOG_GROUP="/aws/lambda/DVSA-ORDER-MANAGER"
 LATEST_STREAM=$(aws logs describe-log-streams \
   --log-group-name "$LOG_GROUP" \
