@@ -1,9 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 6: FIX VERIFICATION
-# Confirm rate limiting blocks the flood while legitimate
-# requests still complete successfully
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 source "$(dirname "$0")/../helpers/create_order.sh"
@@ -15,9 +10,6 @@ echo "=========================================="
 guard_token "TOKEN_B"
 guard_token "TOKEN_C"
 
-# -------------------------------------------------------
-# TEST 1: Flood should now hit 429 rate limit
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Sending 20 rapid concurrent requests (should hit rate limit)..."
 
@@ -53,12 +45,9 @@ fi
 
 rm -f /tmp/verify6_*.txt
 
-# -------------------------------------------------------
-# TEST 2: Single legitimate request should still work
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] Single legitimate request (should SUCCEED)..."
-sleep 2  # Allow rate limit window to reset
+sleep 2  
 
 START=$(date +%s%N)
 LEGIT=$(curl -s "$API" \
@@ -77,9 +66,6 @@ else
     echo "   ⚠️  Unexpected response — check if fix broke normal functionality."
 fi
 
-# -------------------------------------------------------
-# TEST 3: Check Lambda reserved concurrency is set
-# -------------------------------------------------------
 echo ""
 echo "[TEST 3] Checking Lambda concurrency setting..."
 CONCURRENCY=$(aws lambda get-function-concurrency \
