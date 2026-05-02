@@ -1,8 +1,4 @@
 #!/bin/bash
-# =============================================================
-# LESSON 4: FIX VERIFICATION
-# Confirm unauthenticated S3 upload is now blocked
-# =============================================================
 
 source "$(dirname "$0")/../config.sh"
 
@@ -15,9 +11,6 @@ if [ "$RECEIPTS_BUCKET" = "YOUR_RECEIPTS_BUCKET_NAME" ]; then
     read -r RECEIPTS_BUCKET
 fi
 
-# -------------------------------------------------------
-# TEST 1: Unauthenticated upload should now be BLOCKED
-# -------------------------------------------------------
 echo ""
 echo "[TEST 1] Attempting unauthenticated upload (should be DENIED)..."
 
@@ -36,9 +29,6 @@ else
     echo "   ❌ Unauthenticated upload may still be allowed. Check bucket policy."
 fi
 
-# -------------------------------------------------------
-# TEST 2: Verify Block Public Access is active
-# -------------------------------------------------------
 echo ""
 echo "[TEST 2] Verifying Block Public Access settings..."
 BPA=$(aws s3api get-public-access-block \
@@ -57,9 +47,6 @@ else
     echo "   ⚠️  Some Block Public Access settings are not enabled."
 fi
 
-# -------------------------------------------------------
-# TEST 3: Authenticated upload via application flow
-# -------------------------------------------------------
 echo ""
 echo "[TEST 3] Checking bucket policy is applied..."
 aws s3api get-bucket-policy \
